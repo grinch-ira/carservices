@@ -25,7 +25,19 @@ modules:
         properties:
           srv-url: ${default-url}
     requires:
-      []
+      - name: carservices-auth
 
 resources:
-  []
+  - name: carservices-auth
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: ./xs-security.json
+      config:
+        xsappname: carservices-${org}-${space}
+        tenant-mode: dedicated
+        oauth2-configuration:
+          credential-types:
+            - "binding-secret"
+            - "x509"
