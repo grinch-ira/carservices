@@ -35,6 +35,7 @@ modules:
       - name: app-api
         properties:
           CDS_MULTITENANCY_APPUI_URL: ~{url}
+      - name: carservices-db
 
   - name: carservices
     type: approuter.nodejs
@@ -73,6 +74,7 @@ modules:
     requires:
       - name: carservices-auth
       - name: carservices-logging
+      - name: carservices-db
     build-parameters:
       builder: custom
       build-result: gen
@@ -132,3 +134,8 @@ resources:
           onUnSubscriptionAsync: true
           onUpdateDependenciesAsync: true
           callbackTimeoutMillis: 300000 # Increase if your deployments are taking longer than that
+  - name: carservices-db
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: service-manager
+      service-plan: container

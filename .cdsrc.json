@@ -7,7 +7,8 @@
     "application-logging": true,
     "[with-mtx]": {
       "multitenancy": true
-    }
+    },
+    "db": "hana"
   },
   "profile": "with-mtx-sidecar"
 }
