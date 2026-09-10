@@ -1,0 +1,98 @@
+<mvc:View
+    controllerName="launchpad.controller.App"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:tnt="sap.tnt"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    displayBlock="true">
+
+    <tnt:ToolPage id="config.toolpage">
+
+        <!-- Боковое меню -->
+
+
+        <!-- Главный экран -->
+        <tnt:mainContents>
+            <Page
+                id="mainPage"
+                showHeader="true">
+
+                <customHeader>
+                    <Toolbar>
+                        <Title
+                            text="Car service"
+                            level="H1" />
+                    </Toolbar>
+                </customHeader>
+
+                <content>
+                    <VBox
+                        width="100%"
+                        alignItems="Center"
+                        class="sapUiLargeMarginTop">
+
+                        <Title
+                            text="Car service"
+                            level="H1"
+                            class="sapUiMediumMarginBottom" />
+
+                        <HBox
+                            justifyContent="Center"
+                            wrap="Wrap">
+
+                            <GenericTile
+                                id="carsTile"
+                                header="Cars"
+                                subheader="Manage cars"
+                                press="onCarsPress"
+                                class="sapUiSmallMargin">
+
+                                <TileContent>
+                                    <NumericContent
+                                        icon="sap-icon://car-rental"
+                                        value="Cars" />
+                                </TileContent>
+
+                            </GenericTile>
+
+                            <GenericTile
+                                id="customersTile"
+                                header="Customers"
+                                subheader="Manage customers"
+                                press="onCustomersPress"
+                                class="sapUiSmallMargin">
+
+                                <TileContent>
+                                    <NumericContent
+                                        icon="sap-icon://customer"
+                                        value="Customers" />
+                                </TileContent>
+
+                            </GenericTile>
+
+                            <GenericTile
+                                id="partssTile"
+                                header="Parts"
+                                subheader="Manage Parts"
+                                press="onPartspress"
+                                class="sapUiSmallMargin">
+
+                                <TileContent>
+                                    <NumericContent
+                                        icon="sap-icon://settings"
+                                        value="Parts" />
+                                </TileContent>
+
+                            </GenericTile>
+
+                        </HBox>
+
+                    </VBox>
+                </content>
+
+            </Page>
+        </tnt:mainContents>
+
+    </tnt:ToolPage>
+
+</mvc:View>

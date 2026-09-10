@@ -1,5 +1,12 @@
 {
+  "welcomeFile": "/launchpad/index.html",
   "routes": [
+    {
+      "source": "^/launchpad/(.*)$",
+      "target": "$1",
+      "localDir": "launchpad/webapp",
+       "authenticationType": "xsuaa"
+    },
     {
       "source": "^/(.*)$",
       "target": "$1",
