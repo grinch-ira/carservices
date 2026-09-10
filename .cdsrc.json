@@ -1,2 +1,14 @@
 {
+  "requires": {
+    "[production]": {
+      "auth": "xsuaa",
+      "multitenancy": true
+    },
+    "application-logging": true,
+    "[with-mtx]": {
+      "multitenancy": true
+    },
+    "db": "hana"
+  },
+  "profile": "with-mtx-sidecar"
 }
