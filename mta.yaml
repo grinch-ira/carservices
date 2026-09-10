@@ -63,7 +63,7 @@ modules:
         properties:
           app-protocol: ${protocol}
           app-uri: ${default-uri}
-          add-domain: ${domain}
+          app-domain: ${domain}
           url: ${default-url}
     properties:
       TENANT_HOST_PATTERN: "^(.*)-${default-uri}"
