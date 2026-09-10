@@ -15,6 +15,7 @@ modules:
       SPRING_PROFILES_ACTIVE: cloud,sandbox
       JBP_CONFIG_COMPONENTS: "jres: ['com.sap.xs.java.buildpack.jre.SAPMachineJRE']"
       JBP_CONFIG_SAP_MACHINE_JRE: '{ version: 21.+ }'
+      CDS_MULTITENANCY_APPUI_TENANTSEPARATOR: "-"
     build-parameters:
       builder: custom
       commands:
@@ -27,6 +28,13 @@ modules:
     requires:
       - name: carservices-auth
       - name: carservices-logging
+      - name: mtx-api
+        properties:
+          CDS_MULTITENANCY_SIDECAR_URL: ~{mtx-url}
+      - name: carservices-registry
+      - name: app-api
+        properties:
+          CDS_MULTITENANCY_APPUI_URL: ~{url}
 
   - name: carservices
     type: approuter.nodejs
@@ -44,12 +52,42 @@ modules:
           forwardAuthToken: true
       - name: carservices-auth
       - name: carservices-logging
+      - name: mtx-api
+        group: destinations
+        properties:
+          name: mtx-api # must be used in xs-app.json as well
+          url: ~{mtx-url}
     provides:
       - name: app-api
         properties:
           app-protocol: ${protocol}
           app-uri: ${default-uri}
+          add-domain: ${domain}
           url: ${default-url}
+    properties:
+      TENANT_HOST_PATTERN: "^(.*)-${default-uri}"
+
+  - name: carservices-mtx
+    type: nodejs
+    path: mtx/sidecar
+    requires:
+      - name: carservices-auth
+      - name: carservices-logging
+    build-parameters:
+      builder: custom
+      build-result: gen
+      commands:
+        - npm run build
+      requires:
+        - name: carservices-srv
+    parameters:
+      instances: 1
+      memory: 256M
+      disk-quota: 512M
+    provides:
+      - name: mtx-api
+        properties:
+          mtx-url: ${default-url}
 
 resources:
   - name: carservices-auth
@@ -60,13 +98,13 @@ resources:
       path: ./xs-security.json
       config:
         xsappname: carservices-${org}-${space}
-        tenant-mode: dedicated
+        tenant-mode: shared
         oauth2-configuration:
           credential-types:
             - "binding-secret"
             - "x509"
           redirect-uris:
-            - https://*~{app-api/app-uri}/**
+            - https://*~{app-api/app-domain}/**
     requires:
       - name: app-api
   - name: carservices-logging
@@ -74,3 +112,23 @@ resources:
     parameters:
       service: application-logs
       service-plan: lite
+  - name: carservices-registry
+    type: org.cloudfoundry.managed-service
+    requires:
+      - name: srv-api
+    parameters:
+      service: saas-registry
+      service-plan: application
+      config:
+        xsappname: carservices-${org}-${space}
+        appName: carservices-${org}-${space}
+        displayName: carservices
+        description: A car services project.
+        category: 'Category'
+        appUrls:
+          getDependencies: ~{srv-api/srv-url}/mt/v1.0/subscriptions/dependencies
+          onSubscription: ~{srv-api/srv-url}/mt/v1.0/subscriptions/tenants/{tenantId}
+          onSubscriptionAsync: true
+          onUnSubscriptionAsync: true
+          onUpdateDependenciesAsync: true
+          callbackTimeoutMillis: 300000 # Increase if your deployments are taking longer than that
