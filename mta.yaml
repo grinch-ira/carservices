@@ -26,6 +26,7 @@ modules:
           srv-url: ${default-url}
     requires:
       - name: carservices-auth
+      - name: carservices-logging
 
   - name: carservices
     type: approuter.nodejs
@@ -42,6 +43,7 @@ modules:
           url: ~{srv-url}
           forwardAuthToken: true
       - name: carservices-auth
+      - name: carservices-logging
     provides:
       - name: app-api
         properties:
@@ -67,3 +69,8 @@ resources:
             - https://*~{app-api/app-uri}/**
     requires:
       - name: app-api
+  - name: carservices-logging
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: application-logs
+      service-plan: lite

@@ -2,6 +2,7 @@
   "requires": {
     "[production]": {
       "auth": "xsuaa"
-    }
+    },
+    "application-logging": true
   }
 }
