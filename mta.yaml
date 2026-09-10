@@ -27,6 +27,28 @@ modules:
     requires:
       - name: carservices-auth
 
+  - name: carservices
+    type: approuter.nodejs
+    path: app/router
+    parameters:
+      keep-existing-routes: true
+      disk-quota: 256M
+      memory: 256M
+    requires:
+      - name: srv-api
+        group: destinations
+        properties:
+          name: srv-api # must be used in xs-app.json as well
+          url: ~{srv-url}
+          forwardAuthToken: true
+      - name: carservices-auth
+    provides:
+      - name: app-api
+        properties:
+          app-protocol: ${protocol}
+          app-uri: ${default-uri}
+          url: ${default-url}
+
 resources:
   - name: carservices-auth
     type: org.cloudfoundry.managed-service
@@ -41,3 +63,7 @@ resources:
           credential-types:
             - "binding-secret"
             - "x509"
+          redirect-uris:
+            - https://*~{app-api/app-uri}/**
+    requires:
+      - name: app-api
